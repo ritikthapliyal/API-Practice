@@ -13,19 +13,14 @@ connectDB()
 
 const app = express()
 
+//Body Parser
+app.use(express.json())
+
+
 
 //mount routers
 app.use('/api/v1/bootcamps',bootcamps)
 
-
-app.get('/',(req,res)=>{
-
-    res.status(400).json({
-        success: false,
-        msg : "bad request"
-    })
-
-})
 
 
 const PORT = process.env.PORT || 5000
