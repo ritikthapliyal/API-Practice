@@ -1,5 +1,5 @@
 const Bootcamp = require('../Models/Bootcamp')
-
+const ErrorResponse = require('../utils/errorResponse')
 
 
 //@desc     Get single bootcamp
@@ -21,7 +21,8 @@ exports.getBootcamp = async (req,res, next) => {
         })
     }
     catch(err){
-        res.status(400).json({sucess:false})
+        next(new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`,400))
+        // res.status(400).json({sucess:false})
     }
 }
 
@@ -72,34 +73,51 @@ exports.createBootcamp = async (req,res, next) => {
 //@access   Private
 exports.updateBootcamp = async (req,res, next) => {
     
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
-        new : true,
-        runValidators: true
-    })
+    try{
+        const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
+            new : true,
+            runValidators: true
+        })
+        
+        // new: true means that the method should return the updated bootcamp object after it has been updated. 
+        // By default, findByIdAndUpdate() returns the old bootcamp object before it was updated.
     
-    // new: true means that the method should return the updated bootcamp object after it has been updated. 
-    // By default, findByIdAndUpdate() returns the old bootcamp object before it was updated.
-
-    // runValidators: true means that Mongoose will run the validation rules defined in the bootcamp schema before saving the 
-    // updated object to the database. If any validation rule fails, the method will throw a validation error.
-
-    if(!bootcamp){
-        return res.status(400).json({sucess:false})
+        // runValidators: true means that Mongoose will run the validation rules defined in the bootcamp schema before saving the 
+        // updated object to the database. If any validation rule fails, the method will throw a validation error.
+    
+        if(!bootcamp){
+            return res.status(400).json({sucess:false})
+        }
+    
+        res.status(200).json({
+            success: true,
+            data : bootcamp
+        })
     }
-
-    res.status(200).json({
-        success: true,
-        data : bootcamp
-    })
+    catch(err){
+        res.status(400).json({sucess:false})
+    }
+    
 }
 
 
 //@desc     Delete Bootcamp
 //@route    DELETE - /api/v1/bootcamps/:id
 //@access   Private
-exports.deleteBootcamp = (req,res, next) => {
-    res.status(200).json({
-        success: true,
-        msg : `delete bootcamp ${req.params.id}`
-    })
+exports.deleteBootcamp = async(req,res, next) => {
+    try{
+        const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
+    
+        if(!bootcamp){
+            return res.status(400).json({sucess:false})
+        }
+    
+        res.status(200).json({
+            success: true,
+            data : {}
+        })
+    }
+    catch(err){
+        res.status(400).json({sucess:false})
+    }
 }
