@@ -70,10 +70,26 @@ exports.createBootcamp = async (req,res, next) => {
 //@desc     Update bootcamp
 //@route    PUT - /api/v1/bootcamps/:id
 //@access   Private
-exports.updateBootcamp = (req,res, next) => {
+exports.updateBootcamp = async (req,res, next) => {
+    
+    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id,req.body,{
+        new : true,
+        runValidators: true
+    })
+    
+    // new: true means that the method should return the updated bootcamp object after it has been updated. 
+    // By default, findByIdAndUpdate() returns the old bootcamp object before it was updated.
+
+    // runValidators: true means that Mongoose will run the validation rules defined in the bootcamp schema before saving the 
+    // updated object to the database. If any validation rule fails, the method will throw a validation error.
+
+    if(!bootcamp){
+        return res.status(400).json({sucess:false})
+    }
+
     res.status(200).json({
         success: true,
-        msg : `update bootcamp ${req.params.id}`
+        data : bootcamp
     })
 }
 
