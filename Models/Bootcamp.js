@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const slugify = require('slugify')
 
 // A "slug" is a URL-friendly version of a string. 
 // It's typically used in web development to create readable and SEO-friendly URLs for a website's pages or resources. 
@@ -15,7 +16,7 @@ const BootcampSchema = new mongoose.Schema({
 
     name: {
         type: String,
-        required: [true, 'pleaase add a name'],
+        required: [true, 'please add a name'],
         unique: true,
         trim: true,
         maxlength: [50, 'Name cannot be more than 50 characters']
@@ -23,7 +24,7 @@ const BootcampSchema = new mongoose.Schema({
     slug: String,
     description: {
         type: String,
-        required: [true, 'pleaase add a description'],
+        required: [true, 'please add a description'],
         unique: true,
         trim: true,
         maxlength: [500, 'description cannot be more than 50 characters']
@@ -44,7 +45,7 @@ const BootcampSchema = new mongoose.Schema({
 
     address: {
         type: String,
-        require: [ true, 'Please add an address']
+        required: [ true, 'Please add an address']
     },
     // location: {
     //     //GeoJSON Point
@@ -114,5 +115,13 @@ const BootcampSchema = new mongoose.Schema({
     }
     
 })
+
+
+//create bootcamp slug from the name
+BootcampSchema.pre('save',function(next){
+    this.slug = slugify(this.name,{lower: true})
+    next()
+})
+
 
 module.exports = mongoose.model('Bootcamp',BootcampSchema)
