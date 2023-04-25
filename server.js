@@ -2,6 +2,7 @@ const express = require('express')
 const errorHandler = require('./middleware/error')
 const dotenv = require('dotenv')
 const bootcamps = require('./routes/bootcamps')
+const auth = require('./routes/auth')
 const connectDB = require('./config/db')
 
 //Load env variables
@@ -20,6 +21,7 @@ app.use(express.json())
 
 //mount routers
 app.use('/api/v1/bootcamps',bootcamps)
+app.use('/api/v1/auth',auth)
 
 //Must be here in order to work
 app.use(errorHandler)

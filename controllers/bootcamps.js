@@ -32,8 +32,43 @@ exports.getBootcamp = async (req,res, next) => {
 //@access   Public
 exports.getBootcamps = async (req,res, next) => {
     
+
+    // http://localhost:6000/api/v1/bootcamps?name=Devcentral+Bootcamp&jobAssistance=true
+    // console.log(req.query) ---> { name: 'Devcentral Bootcamp', jobAssistance: 'true' }
+
+
+    // http://localhost:6000/api/v1/bootcamps?averageCost[lte]=10000
+    // console.log(req.query) ---> { averageCost: { lte: '10000' } }
+    
+
+    // let query;
+
+    // // copy request quert(req.query)
+    // let reqQuery = {...req.query}
+
+
+    // //fields to exclude
+    // const removeFields = ['select']
+
+
+    // //loop over removeFields and delete them from reqQuery
+    // removeFields.forEach(param => delete reqQuery[param])
+
+
+    // //create query string
+    // let queryStr = JSON.stringify(req.query)
+    
+    // //create operators ($gt,$gte,$lt,$lte,$in)
+    // queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+    // // console.log(req.query) ---> { averageCost: { '$lte': '10000' } }
+
+    // //finding resource
+    // query = await Bootcamp.find(JSON.parse(queryStr))
+
+    // //Select fields
+    // if(req.query.select)
+
     try{
-        const bootcamps = await Bootcamp.find()
         res.status(200).json({
             success: true,
             data : bootcamps
