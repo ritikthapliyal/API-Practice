@@ -14,13 +14,8 @@ exports.register = async (req,res, next) => {
         name,email,password,role
     })
 
-    const token = user.getSignedJwtToken()
-
-
-    res.status(200).json({
-        success: true,
-        token
-    })
+   
+    sendCookieResponse(user,200,res)
 }
 
 
@@ -29,8 +24,7 @@ exports.register = async (req,res, next) => {
 //@access   Public
 exports.login = async (req,res, next) => {
 
-    const {name,email,password,role} = req.body
-
+    const {email,password} = req.body
 
     //validate email and password
     if(!email || !password){
@@ -38,17 +32,40 @@ exports.login = async (req,res, next) => {
     }
 
     //check for user
-    const user = await User.findone({email}).select('password')
+    const user = await User.findOne({email}).select('+password')
 
     if(!user){
         return next(new ErrorResponse("Invalid Credentials",401)) 
     }
 
+    //check if password matches
+    const isMatch = await user.matchPassword(password)
 
+    if(!isMatch){
+        return next(new ErrorResponse("Incorrect Password",401))
+    }
+
+    sendCookieResponse(user,200,res)
+
+
+}
+
+
+
+
+
+//get token from model, also create cookie and send response.
+const sendCookieResponse = (user,statusCode, res)=>{
+    
+    //create token
     const token = user.getSignedJwtToken()
 
+    const options = {
+        expires : new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+    }
 
-    res.status(200).json({
+    res.status(statusCode).cookie('token',token, options).json({
         success: true,
         token
     })

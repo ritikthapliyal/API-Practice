@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const bootcamps = require('./routes/bootcamps')
 const auth = require('./routes/auth')
 const connectDB = require('./config/db')
+const cookieParser = require('cookie-parser')
 
 //Load env variables
 dotenv.config({
@@ -17,6 +18,10 @@ const app = express()
 
 //Body Parser
 app.use(express.json())
+
+
+//cookie parser
+app.use(cookieParser())
 
 
 //mount routers
